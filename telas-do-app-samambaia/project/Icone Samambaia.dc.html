@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  body { margin: 0; background: #F4F5F2; }
+</style>
+</helmet>
+<div style="display:flex;flex-wrap:wrap;gap:48px;align-items:flex-end;padding:56px;font-family:'Instrument Sans',system-ui,sans-serif">
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:14px;font-weight:600;color:#6C7A70">1024 × 1024</div>
+    <div style="width:512px;height:512px;background:#1F6B3B">
+      <svg viewBox="0 0 1024 1024" width="512" height="512" style="display:block">
+        <g transform="translate(41 -19) scale(0.92)"><path d="M512 872 C 500 640 505 420 512 176" fill="none" stroke="#FFFFFF" stroke-width="52" stroke-linecap="round"></path>
+        <sc-for list="{{ fronds }}" as="f" hint-placeholder-count="22">
+          <path d="{{ f.d }}" fill="none" stroke="#FFFFFF" stroke-width="{{ f.w }}" stroke-linecap="round"></path>
+        </sc-for></g>
+      </svg>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:14px;font-weight:600;color:#6C7A70">Miniaturas</div>
+    <div style="display:flex;gap:20px;align-items:flex-end">
+      <div style="width:180px;height:180px;background:#1F6B3B">
+        <svg viewBox="0 0 1024 1024" width="180" height="180" style="display:block">
+          <g transform="translate(41 -19) scale(0.92)"><path d="M512 872 C 500 640 505 420 512 176" fill="none" stroke="#FFFFFF" stroke-width="52" stroke-linecap="round"></path>
+          <sc-for list="{{ fronds }}" as="f" hint-placeholder-count="22">
+            <path d="{{ f.d }}" fill="none" stroke="#FFFFFF" stroke-width="{{ f.w }}" stroke-linecap="round"></path>
+          </sc-for></g>
+        </svg>
+      </div>
+      <div style="width:96px;height:96px;background:#1F6B3B">
+        <svg viewBox="0 0 1024 1024" width="96" height="96" style="display:block">
+          <g transform="translate(41 -19) scale(0.92)"><path d="M512 872 C 500 640 505 420 512 176" fill="none" stroke="#FFFFFF" stroke-width="52" stroke-linecap="round"></path>
+          <sc-for list="{{ fronds }}" as="f" hint-placeholder-count="22">
+            <path d="{{ f.d }}" fill="none" stroke="#FFFFFF" stroke-width="{{ f.w }}" stroke-linecap="round"></path>
+          </sc-for></g>
+        </svg>
+      </div>
+      <div style="width:60px;height:60px;background:#1F6B3B">
+        <svg viewBox="0 0 1024 1024" width="60" height="60" style="display:block">
+          <g transform="translate(41 -19) scale(0.92)"><path d="M512 872 C 500 640 505 420 512 176" fill="none" stroke="#FFFFFF" stroke-width="52" stroke-linecap="round"></path>
+          <sc-for list="{{ fronds }}" as="f" hint-placeholder-count="22">
+            <path d="{{ f.d }}" fill="none" stroke="#FFFFFF" stroke-width="{{ f.w }}" stroke-linecap="round"></path>
+          </sc-for></g>
+        </svg>
+      </div>
+      <div style="width:40px;height:40px;background:#1F6B3B">
+        <svg viewBox="0 0 1024 1024" width="40" height="40" style="display:block">
+          <g transform="translate(41 -19) scale(0.92)"><path d="M512 872 C 500 640 505 420 512 176" fill="none" stroke="#FFFFFF" stroke-width="52" stroke-linecap="round"></path>
+          <sc-for list="{{ fronds }}" as="f" hint-placeholder-count="22">
+            <path d="{{ f.d }}" fill="none" stroke="#FFFFFF" stroke-width="{{ f.w }}" stroke-linecap="round"></path>
+          </sc-for></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:700}}">
+class Component extends DCLogic {
+  renderVals() {
+    const n = 5;
+    const fronds = [];
+    for (let i = 0; i < n; i++) {
+      const t = i / (n - 1);
+      const y = 790 - t * 540;
+      const x = 512;
+      const len = 280 * (1 - t * 0.62);
+      const lift = len * 0.6;
+      const w = 52 - t * 8;
+      for (const s of [-1, 1]) {
+        const ex = x + s * len;
+        const ey = y - lift;
+        const c1x = x + s * len * 0.35;
+        const c1y = y - lift * 0.05;
+        const c2x = x + s * len * 0.8;
+        const c2y = y - lift * 0.45;
+        fronds.push({ d: `M ${x} ${y} C ${c1x} ${c1y} ${c2x} ${c2y} ${ex} ${ey}`, w });
+      }
+    }
+    return { fronds };
+  }
+}
+</script>
+</body>
+</html>

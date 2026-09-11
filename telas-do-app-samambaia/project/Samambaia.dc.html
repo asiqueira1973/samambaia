@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin: 0; background: #F4F5F2; font-family: 'Instrument Sans', system-ui, sans-serif; }
+  a { color: #1F6B3B; }
+  a:hover { color: #16522C; }
+</style>
+</helmet>
+<section style="display:flex;flex-direction:column;gap:28px;padding:56px">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <div style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1F6B3B;border:1px solid #C8DFCF;border-radius:999px;padding:5px 11px">1a</div>
+    <div style="font-size:22px;font-weight:600;color:#15201A">Samambaia — três telas</div>
+    <div style="font-size:15px;color:#6C7A70">Arraste fotos para os espaços de imagem</div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start">
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:14px;font-weight:600;color:#6C7A70">Lista de Plantas</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+        <div style="height:100%;background:#FFFFFF;display:flex;flex-direction:column;padding:62px 22px 0;box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:14px 0 20px">
+            <div>
+              <div style="font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8A9990">Quarta, 11 de setembro</div>
+              <div style="font-size:32px;font-weight:700;color:#15201A;letter-spacing:-.02em;margin-top:6px">Minhas plantas</div>
+            </div>
+            <div style="width:40px;height:40px;border-radius:999px;background:#1F6B3B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:500;line-height:1;padding-bottom:3px;box-sizing:border-box">+</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;background:#EAF3EC;border-radius:16px;padding:14px 16px;margin-bottom:22px">
+            <div style="width:8px;height:8px;border-radius:999px;background:#1F6B3B"></div>
+            <div style="font-size:15px;font-weight:600;color:#1F6B3B">1 planta precisa de água hoje</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ plants }}" as="p" hint-placeholder-count="4">
+              <div style="display:flex;gap:16px;align-items:center;background:#FFFFFF;border:1px solid #E6EAE5;border-radius:22px;padding:12px">
+                <div style="width:76px;height:76px;border-radius:18px;overflow:hidden;flex:0 0 auto;background:#EEF1EC">
+                  <image-slot id="{{ p.slot }}" shape="rounded" radius="18" placeholder="Foto"></image-slot>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                  <div style="font-size:18px;font-weight:600;color:#15201A">{{ p.name }}</div>
+                  <div style="font-size:14px;color:#8A9990">Rega a cada {{ p.every }} dias</div>
+                  <div style="font-size:14px;font-weight:600;color:{{ p.statusColor }}">{{ p.status }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:14px;font-weight:600;color:#6C7A70">Cadastrar Planta</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+        <div style="height:100%;background:#FFFFFF;display:flex;flex-direction:column;padding:62px 22px 28px;box-sizing:border-box">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0 22px">
+            <div style="font-size:16px;font-weight:600;color:#8A9990">Cancelar</div>
+            <div style="font-size:16px;font-weight:600;color:#15201A">Nova planta</div>
+            <div style="font-size:16px;font-weight:600;color:#C8CFC9">Salvar</div>
+          </div>
+
+          <div style="height:260px;border-radius:26px;overflow:hidden;background:#F1F4F0;border:1px dashed #C8DFCF">
+            <image-slot id="samb-new-photo" shape="rounded" radius="26" placeholder="Adicionar foto"></image-slot>
+          </div>
+
+          <div style="margin-top:30px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8A9990">Nome</div>
+            <div style="border-bottom:1.5px solid #1F6B3B;padding:6px 2px 12px;font-size:22px;font-weight:600;color:#15201A">Samambaia<span style="color:#1F6B3B;font-weight:400">|</span></div>
+          </div>
+
+          <div style="margin-top:34px;display:flex;flex-direction:column;gap:14px">
+            <div style="font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8A9990">Frequência de rega</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;background:#F6F8F5;border-radius:20px;padding:14px 16px">
+              <div style="width:46px;height:46px;border-radius:14px;background:#FFFFFF;border:1px solid #E6EAE5;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:#1F6B3B;line-height:1;padding-bottom:4px;box-sizing:border-box">−</div>
+              <div style="display:flex;align-items:baseline;gap:8px">
+                <div style="font-size:40px;font-weight:700;color:#15201A;letter-spacing:-.03em">7</div>
+                <div style="font-size:17px;font-weight:500;color:#6C7A70">dias</div>
+              </div>
+              <div style="width:46px;height:46px;border-radius:14px;background:#1F6B3B;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:#fff;line-height:1;padding-bottom:4px;box-sizing:border-box">+</div>
+            </div>
+            <div style="font-size:14px;color:#8A9990">Você será avisado a cada 7 dias.</div>
+          </div>
+
+          <div style="flex:1"></div>
+          <div style="height:56px;border-radius:18px;background:#1F6B3B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600">Salvar planta</div>
+        </div>
+      </x-import>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:14px;font-weight:600;color:#6C7A70">Detalhe da Planta</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+        <div style="height:100%;background:#FFFFFF;display:flex;flex-direction:column;box-sizing:border-box">
+          <div style="position:relative;height:380px;margin-top:62px;flex:0 0 auto">
+            <image-slot id="samb-detail-photo" shape="rect" placeholder="Foto da planta"></image-slot>
+            <div style="position:absolute;top:16px;left:20px;width:38px;height:38px;border-radius:999px;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#15201A;pointer-events:none">‹</div>
+          </div>
+
+          <div style="padding:26px 22px 28px;display:flex;flex-direction:column;flex:1;box-sizing:border-box">
+            <div style="display:inline-flex;align-self:flex-start;align-items:center;gap:8px;background:#EAF3EC;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1F6B3B">Hoje é o dia</div>
+            <div style="font-size:34px;font-weight:700;color:#15201A;letter-spacing:-.025em;margin-top:14px">Samambaia</div>
+            <div style="font-size:16px;color:#8A9990;margin-top:4px">Rega a cada 7 dias</div>
+
+            <div style="margin-top:26px;display:flex;flex-direction:column;gap:0;border-top:1px solid #E6EAE5">
+              <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #E6EAE5">
+                <div style="font-size:16px;color:#6C7A70">Última rega</div>
+                <div style="font-size:16px;font-weight:600;color:#15201A">4 de setembro</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #E6EAE5">
+                <div style="font-size:16px;color:#6C7A70">Próxima rega</div>
+                <div style="font-size:16px;font-weight:600;color:#1F6B3B">Hoje</div>
+              </div>
+            </div>
+
+            <div style="flex:1"></div>
+            <div style="height:60px;border-radius:20px;background:#1F6B3B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600">Reguei hoje</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;urgentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#1F6B3B&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#1F6B3B&quot;,&quot;#C2410C&quot;,&quot;#15201A&quot;]}}">
+class Component extends DCLogic {
+  renderVals() {
+    const urgent = this.props.urgentColor ?? '#1F6B3B';
+    const plants = [
+      { name: 'Samambaia', every: 7, status: 'Hoje é o dia', statusColor: urgent, slot: 'samb-p1' },
+      { name: 'Costela-de-adão', every: 10, status: 'Em 2 dias', statusColor: '#8A9990', slot: 'samb-p2' },
+      { name: 'Zamioculca', every: 14, status: 'Em 5 dias', statusColor: '#8A9990', slot: 'samb-p3' },
+      { name: 'Jiboia', every: 7, status: 'Em 6 dias', statusColor: '#8A9990', slot: 'samb-p4' },
+      { name: 'Espada-de-são-jorge', every: 21, status: 'Em 12 dias', statusColor: '#8A9990', slot: 'samb-p5' }
+    ];
+    return { plants };
+  }
+}
+</script>
+</body>
+</html>

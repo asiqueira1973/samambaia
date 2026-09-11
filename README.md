@@ -1,56 +1,115 @@
-# Welcome to your Expo app 👋
+# Samambaia
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App de celular que lembra quais plantas de casa já foram regadas e quais ainda não.
+Um código só, publicado na App Store e na Google Play.
 
-## Get started
+Sem login, sem conta, sem nuvem: tudo fica num banco SQLite dentro do próprio aparelho.
+Gratuito, sem assinatura e sem compras dentro do app.
 
-1. Install dependencies
+## Telas
 
-   ```bash
-   npm install
-   ```
+| Tela | Arquivo | O que faz |
+| --- | --- | --- |
+| Lista de Plantas | `src/app/index.tsx` | Todas as plantas, da mais urgente para a menos urgente, com foto, nome e quantos dias faltam |
+| Cadastrar Planta | `src/app/nova.tsx` | Foto (câmera ou galeria), nome e frequência de rega em dias |
+| Detalhe da Planta | `src/app/planta/[id].tsx` | Foto grande, nome, última rega e o botão "Reguei hoje" |
 
-2. Start the app
+## Regras de negócio
 
-   ```bash
-   npx expo start
-   ```
+- Ao cadastrar, a próxima rega é **hoje + a frequência escolhida**.
+- Ao tocar em **"Reguei hoje"**, a última rega passa a ser hoje e a próxima é recalculada.
+- Uma notificação local avisa **às 9h do dia em que a planta precisa de água**.
 
-In the output, you'll find options to open the app in a
+As datas são guardadas como data de calendário local (`YYYY-MM-DD`), nunca como
+timestamp — assim "faltam 2 dias" continua certo mesmo abrindo o app às 23h59 ou
+depois de uma viagem que muda o fuso (`src/lib/dates.ts`).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Como rodar
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Os módulos nativos (SQLite, câmera, notificações, SVG) não rodam no Expo Go:
+é preciso um build de desenvolvimento.
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+iOS — o CocoaPods do sistema exige locale UTF-8:
 
-### Other setup steps
+```bash
+npx expo prebuild --platform ios --clean && (cd ios && LANG=en_US.UTF-8 pod install) && npx expo run:ios
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Android — precisa do JDK 17 no `org.gradle.java.installations.paths` de `~/.gradle/gradle.properties`:
 
-## Learn more
+```bash
+npx expo prebuild --platform android --clean && npx expo run:android
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Verificações:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm run typecheck && npm run lint && npx expo-doctor
+```
 
-## Join the community
+## Estrutura
 
-Join our community of developers creating universal apps.
+```
+src/
+  app/          telas (expo-router: index, nova, planta/[id])
+  components/   peças visuais reaproveitadas entre telas
+  db/           SQLite: conexão com migrações e o repositório de plantas
+  lib/          datas, fotos, notificações, status de rega, action sheet
+  store/        estado compartilhado que mantém banco e notificações em sincronia
+  theme/        cores e medidas tiradas do mockup
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+`src/store/plants.tsx` é o único ponto por onde passam as alterações: toda
+mutação relê o banco (a fonte da verdade) e refaz os agendamentos, para a lista
+e as notificações nunca divergirem.
+
+## Design
+
+A paleta e as medidas saíram do mockup em `telas-do-app-samambaia/`
+(verde `#1F6B3B`, texto `#15201A`, apoio `#8A9990`, bordas `#E6EAE5`).
+A tipografia é a padrão do sistema — San Francisco no iOS, Roboto no Android —
+por isso nenhum `fontFamily` é declarado em lugar nenhum.
+
+O ícone do app é a mesma samambaia do mockup, gerada a partir da geometria
+original; `src/components/fern-mark.tsx` desenha a mesma folha dentro do app,
+usada como espaço reservado quando a planta não tem foto.
+
+## Decisões que foram além do enunciado
+
+- **Excluir planta** (menu `•••` na tela de detalhe). Sem isso não haveria como
+  tirar do app uma planta que morreu. Apaga também a foto do aparelho.
+- **Foto é opcional.** Sem foto, a planta aparece com a marca da samambaia.
+- **Planta atrasada** ganha texto e cor próprios ("Atrasada há 3 dias", em
+  âmbar). O mockup não previa o caso, que acontece sempre que o aviso é ignorado.
+- **Última rega começa vazia.** O enunciado só define a data da última rega pelo
+  botão "Reguei hoje", então uma planta recém-cadastrada mostra "Ainda não
+  regada" — cadastrar não é o mesmo que ter regado.
+- **Vários ciclos agendados por planta** (até 8, respeitando o teto de
+  notificações do iOS). Se fossem agendados um de cada vez, quem não abrisse o
+  app receberia um único aviso e nunca mais.
+- **A permissão de notificação é pedida ao salvar a primeira planta**, não na
+  abertura do app: é o momento em que o aviso passa a fazer sentido.
+
+## Fora de escopo nesta versão
+
+Compartilhamento entre pessoas, identificação da planta por foto, loja dentro do
+app, login, sincronização em nuvem e versão para tablet.
+
+## Publicação
+
+`ios.supportsTablet: false` e `orientation: portrait` deixam o app só para
+telefone no iOS. Na Play Store, a exclusão de tablets é feita no catálogo de
+dispositivos do Play Console, não no código.
+
+Permissões desnecessárias que vinham do template do Expo (`RECORD_AUDIO`,
+`SYSTEM_ALERT_WINDOW`) estão bloqueadas em `app.json`.
+
+Os builds de loja saem pelo EAS:
+
+```bash
+npx eas build --platform all --profile production
+```
