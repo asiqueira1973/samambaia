@@ -42,7 +42,8 @@
         "expo-image-picker",
         {
           "photosPermission": "O Samambaia usa suas fotos para você escolher a imagem de cada planta.",
-          "cameraPermission": "O Samambaia usa a câmera para você fotografar suas plantas."
+          "cameraPermission": "O Samambaia usa a câmera para você fotografar suas plantas.",
+          "microphonePermission": false
         }
       ],
       [
