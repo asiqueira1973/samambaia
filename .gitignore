@@ -41,3 +41,6 @@ example
 # generated native folders
 /ios
 /android
+
+# credenciais de assinatura (nunca versionar)
+keystore.properties
