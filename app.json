@@ -36,6 +36,7 @@
       ]
     },
     "plugins": [
+      "./plugins/with-local-notifications-only",
       "expo-router",
       "expo-sqlite",
       [
