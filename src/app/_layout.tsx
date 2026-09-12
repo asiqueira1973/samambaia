@@ -45,6 +45,7 @@ function Navigation() {
       }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="nova" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="editar/[id]" options={{ presentation: 'modal' }} />
       <Stack.Screen name="planta/[id]" />
     </Stack>
   );

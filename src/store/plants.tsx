@@ -5,6 +5,7 @@ import {
   createPlant as createPlantRow,
   deletePlant as deletePlantRow,
   listPlants,
+  updatePlant as updatePlantRow,
   waterPlant as waterPlantRow,
   type Plant,
 } from '@/db/plants';
@@ -16,6 +17,10 @@ type PlantsContextValue = {
   loading: boolean;
   refresh: () => Promise<void>;
   addPlant: (input: { name: string; photoUri: string | null; frequencyDays: number }) => Promise<Plant>;
+  editPlant: (
+    id: string,
+    input: { name: string; photoUri: string | null; frequencyDays: number }
+  ) => Promise<void>;
   waterPlant: (id: string) => Promise<void>;
   removePlant: (id: string) => Promise<void>;
 };
@@ -76,6 +81,17 @@ export function PlantsProvider({ children }: { children: ReactNode }) {
     [syncFromDatabase]
   );
 
+  const editPlant = useCallback(
+    async (id: string, input: { name: string; photoUri: string | null; frequencyDays: number }) => {
+      const previous = plants.find((candidate) => candidate.id === id);
+      await updatePlantRow(id, input);
+      // A foto antiga só sai do aparelho depois que o banco já aponta para a nova.
+      if (previous && previous.photoUri !== input.photoUri) deletePhoto(previous.photoUri);
+      await syncFromDatabase();
+    },
+    [plants, syncFromDatabase]
+  );
+
   const waterPlant = useCallback(
     async (id: string) => {
       await waterPlantRow(id);
@@ -95,8 +111,8 @@ export function PlantsProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ plants, loading, refresh, addPlant, waterPlant, removePlant }),
-    [plants, loading, refresh, addPlant, waterPlant, removePlant]
+    () => ({ plants, loading, refresh, addPlant, editPlant, waterPlant, removePlant }),
+    [plants, loading, refresh, addPlant, editPlant, waterPlant, removePlant]
   );
 
   return <PlantsContext.Provider value={value}>{children}</PlantsContext.Provider>;

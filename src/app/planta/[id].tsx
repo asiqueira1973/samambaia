@@ -54,6 +54,10 @@ function PlantDetail({ plant }: { plant: Plant }) {
 
   function openOptions() {
     showActionSheet(plant.name, [
+      {
+        label: 'Editar planta',
+        onPress: () => router.navigate({ pathname: '/editar/[id]', params: { id: plant.id } }),
+      },
       { label: 'Excluir planta', destructive: true, onPress: confirmRemoval },
     ]);
   }

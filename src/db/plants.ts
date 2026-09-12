@@ -1,5 +1,5 @@
 import { getDatabase } from '@/db';
-import { addDays, today, type IsoDate } from '@/lib/dates';
+import { addDays, toIsoDate, today, type IsoDate } from '@/lib/dates';
 
 export type Plant = {
   id: string;
@@ -115,6 +115,45 @@ export async function waterPlant(id: string): Promise<Plant | null> {
   );
 
   return { ...plant, lastWateredAt: now, nextWateringAt };
+}
+
+/**
+ * Altera nome, foto e frequência. Mudar a frequência refaz a conta da próxima
+ * rega a partir da última rega — ou do dia do cadastro, quando a planta nunca
+ * foi regada, que é a mesma âncora usada em `createPlant`. Só renomear ou
+ * trocar a foto não mexe no agendamento.
+ */
+export async function updatePlant(
+  id: string,
+  input: { name: string; photoUri: string | null; frequencyDays: number }
+): Promise<Plant | null> {
+  const db = await getDatabase();
+  const plant = await getPlant(id);
+  if (!plant) return null;
+
+  const frequencyDays = clampFrequency(input.frequencyDays);
+  const anchor = plant.lastWateredAt ?? toIsoDate(new Date(plant.createdAt));
+  const updated: Plant = {
+    ...plant,
+    name: input.name.trim(),
+    photoUri: input.photoUri,
+    frequencyDays,
+    nextWateringAt:
+      frequencyDays === plant.frequencyDays
+        ? plant.nextWateringAt
+        : addDays(anchor, frequencyDays),
+  };
+
+  await db.runAsync(
+    'UPDATE plants SET name = ?, photo_uri = ?, frequency_days = ?, next_watering_at = ? WHERE id = ?',
+    updated.name,
+    updated.photoUri,
+    updated.frequencyDays,
+    updated.nextWateringAt,
+    id
+  );
+
+  return updated;
 }
 
 export async function deletePlant(id: string): Promise<void> {

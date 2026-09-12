@@ -13,12 +13,15 @@ Gratuito, sem assinatura e sem compras dentro do app.
 | Lista de Plantas | `src/app/index.tsx` | Todas as plantas, da mais urgente para a menos urgente, com foto, nome e quantos dias faltam |
 | Cadastrar Planta | `src/app/nova.tsx` | Foto (câmera ou galeria), nome e frequência de rega em dias |
 | Detalhe da Planta | `src/app/planta/[id].tsx` | Foto grande, nome, última rega e o botão "Reguei hoje" |
+| Editar Planta | `src/app/editar/[id].tsx` | O mesmo formulário do cadastro, já preenchido com os dados da planta |
 
 ## Regras de negócio
 
 - Ao cadastrar, a próxima rega é **hoje + a frequência escolhida**.
 - Ao tocar em **"Reguei hoje"**, a última rega passa a ser hoje e a próxima é recalculada.
 - Uma notificação local avisa **às 9h do dia em que a planta precisa de água**.
+- Ao **mudar a frequência**, a próxima rega é recontada a partir da última rega —
+  ou do dia do cadastro, para a planta que nunca foi regada.
 
 As datas são guardadas como data de calendário local (`YYYY-MM-DD`), nunca como
 timestamp — assim "faltam 2 dias" continua certo mesmo abrindo o app às 23h59 ou
@@ -82,6 +85,12 @@ usada como espaço reservado quando a planta não tem foto.
 
 - **Excluir planta** (menu `•••` na tela de detalhe). Sem isso não haveria como
   tirar do app uma planta que morreu. Apaga também a foto do aparelho.
+- **Editar planta** (menu `•••` na tela de detalhe): nome, foto e frequência.
+  Sem isso, corrigir um nome digitado errado exigia excluir e cadastrar de novo,
+  perdendo a data da última rega. O formulário é o mesmo do cadastro
+  (`src/components/plant-form.tsx`), para as duas telas não divergirem.
+  Mudar só o nome ou a foto não mexe no agendamento; mudar a frequência reconta
+  a próxima rega a partir da mesma âncora usada no cadastro.
 - **Foto é opcional.** Sem foto, a planta aparece com a marca da samambaia.
 - **Planta atrasada** ganha texto e cor próprios ("Atrasada há 3 dias", em
   âmbar). O mockup não previa o caso, que acontece sempre que o aviso é ignorado.
@@ -93,6 +102,10 @@ usada como espaço reservado quando a planta não tem foto.
   app receberia um único aviso e nunca mais.
 - **A permissão de notificação é pedida ao salvar a primeira planta**, não na
   abertura do app: é o momento em que o aviso passa a fazer sentido.
+
+## Backlog
+
+Ideias já decididas e ainda não implementadas ficam em [`BACKLOG.md`](BACKLOG.md).
 
 ## Fora de escopo nesta versão
 
