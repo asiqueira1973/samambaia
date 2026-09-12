@@ -1,7 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PlantPhoto } from '@/components/plant-photo';
@@ -78,11 +78,7 @@ function PlantDetail({ plant }: { plant: Plant }) {
 
   return (
     <View style={styles.screen}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        bounces={false}>
+      <View style={styles.content}>
         <View style={[styles.photoArea, { marginTop: insets.top }]}>
           <PlantPhoto uri={plant.photoUri} placeholderSize={120} style={styles.photo} />
           <Pressable
@@ -127,7 +123,7 @@ function PlantDetail({ plant }: { plant: Plant }) {
             </View>
           </View>
         </View>
-      </ScrollView>
+      </View>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
         <PrimaryButton label="Reguei hoje" onPress={water} height={60} disabled={watering} />
@@ -146,13 +142,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surface,
   },
-  scrollView: {
-    // Sem isto a lista cresce por baixo do botão fixo e o link de exclusão
-    // fica escondido atrás dele.
+  content: {
     flex: 1,
-  },
-  scroll: {
-    flexGrow: 1,
   },
   missing: {
     paddingHorizontal: screenPadding,
@@ -166,6 +157,10 @@ const styles = StyleSheet.create({
   },
   photoArea: {
     height: 380,
+    // Em tela 16:9 não cabe foto de 380 mais o corpo inteiro. A foto encolhe
+    // até 160 para o nome e as datas continuarem visíveis sem rolagem.
+    flexShrink: 1,
+    minHeight: 160,
   },
   photo: {
     width: '100%',
@@ -204,7 +199,7 @@ const styles = StyleSheet.create({
     marginTop: -2,
   },
   body: {
-    flex: 1,
+    flexShrink: 0,
     paddingHorizontal: screenPadding,
     paddingTop: 26,
     paddingBottom: 28,

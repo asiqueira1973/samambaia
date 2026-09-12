@@ -16,7 +16,7 @@
       "bundleIdentifier": "com.dablab.samambaia",
       "supportsTablet": false,
       "requireFullScreen": true,
-      "buildNumber": "1",
+      "buildNumber": "2",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }

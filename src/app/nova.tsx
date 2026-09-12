@@ -10,6 +10,7 @@ import {
   Text,
   TextInput,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -25,7 +26,13 @@ import { colors, radius, screenPadding } from '@/theme';
 
 export default function NewPlantScreen() {
   const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
   const { addPlant } = usePlants();
+
+  // Numa tela baixa (16:9), a foto de 260 empurra o seletor de frequência para
+  // fora da área visível. Aqui ela cede espaço; nas telas altas fica no
+  // tamanho do mockup.
+  const photoHeight = Math.min(260, Math.max(140, height - 500));
 
   const [name, setName] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -104,7 +111,11 @@ export default function NewPlantScreen() {
           accessibilityRole="button"
           accessibilityLabel={photoUri ? 'Trocar a foto da planta' : 'Adicionar foto da planta'}
           onPress={openPhotoOptions}
-          style={[styles.photoFrame, !photoUri && styles.photoFrameEmpty]}>
+          style={[
+            styles.photoFrame,
+            { height: photoHeight },
+            !photoUri && styles.photoFrameEmpty,
+          ]}>
           {photoUri ? (
             <PlantPhoto uri={photoUri} placeholderSize={64} style={styles.photo} />
           ) : (
@@ -179,7 +190,6 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   photoFrame: {
-    height: 260,
     borderRadius: radius.photoLarge,
     overflow: 'hidden',
     alignItems: 'center',
