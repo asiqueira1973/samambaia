@@ -38,6 +38,7 @@
     "plugins": [
       "./plugins/with-local-notifications-only",
       "./plugins/with-android-signing",
+      "./plugins/with-ios-signing",
       "expo-router",
       "expo-sqlite",
       [
@@ -70,7 +71,8 @@
       "reactCompiler": true
     },
     "extra": {
-      "router": {}
+      "router": {},
+      "appleTeamId": "XGZW6Y6K25"
     },
     "owner": "alexsiq"
   }
