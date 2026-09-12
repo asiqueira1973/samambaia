@@ -37,6 +37,7 @@
     },
     "plugins": [
       "./plugins/with-local-notifications-only",
+      "./plugins/with-android-signing",
       "expo-router",
       "expo-sqlite",
       [
