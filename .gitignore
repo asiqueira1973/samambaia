@@ -44,3 +44,14 @@ example
 
 # credenciais de assinatura (nunca versionar)
 keystore.properties
+
+# --- Segredos e credenciais (nunca versionar) ---
+.env
+.env.*
+!.env.example
+GoogleService-Info.plist
+google-services.json
+*.keystore
+key.properties
+local.properties
+secrets/
